@@ -123,5 +123,3 @@ Open [http://localhost:3000](http://localhost:3000) in your browser to access th
 * `npm run build` — Build for production
 * `npm run start` — Start the production server
 * `npm run lint` — Check code quality
-
-Do you want me to do that next?
