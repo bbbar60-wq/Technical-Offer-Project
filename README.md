@@ -1,113 +1,127 @@
-Technical Offer Automation UI
-A modern, responsive, and feature-rich front-end interface for managing the creation and revision of technical sales offers.
+# 🚀 Technical Offer Automation UI
 
-A preview of the project workspace in dark mode.
+A **modern, responsive, and feature-rich front-end interface** for managing the creation and revision of technical sales offers.
 
-📖 Description
-This application provides a user-friendly interface for sales engineers and managers to streamline the process of building complex technical proposals. It allows users to manage a catalog of products and clients, create new projects, add equipment with specific quantities and deviations, and track the history of an offer through a revision system.
+> A sneak peek of the project workspace in **dark mode**.
 
-The entire front end is built as a Single Page Application (SPA) with a mocked API that uses browser localStorage to persist data, allowing for a full-featured demonstration without a live backend.
+---
 
-✨ Features
-Authentication: Secure login/logout flow with client-side session management.
+## 📖 Overview
 
-Dashboard: A central hub to access key modules of the application.
+This application provides a **user-friendly interface** for sales engineers and managers to **streamline the process of building complex technical proposals**.
 
-CRUD Operations: Full Create, Read, Update, and Delete functionality for Products and Clients.
+Key capabilities include:
 
-Project Management: Create projects, link them to clients, and manage associated documents (simulated).
+* Managing a catalog of products and clients
+* Creating new projects and linking them to clients
+* Adding equipment with specific quantities and deviations
+* Tracking the history of an offer through a **robust revision system**
 
-Revision Control: Robust "Rev Up" system to create versioned copies of a technical offer, preserving history.
+The front-end is built as a **Single Page Application (SPA)** with a **mocked API** that uses `localStorage` to persist data, allowing a **fully functional demo without a live backend**.
 
-Dynamic Equipment Selection: A powerful modal to search, filter, and add multiple products to a project revision.
+---
 
-Deviation Management: Add and track client-specific deviations for any piece of equipment in an offer.
+## ✨ Features
 
-Asynchronous Job Simulation: User-friendly toast notifications to provide feedback for long-running tasks like document generation.
+* **Authentication**: Secure login/logout flow with client-side session management.
+* **Dashboard**: Central hub to access all key modules.
+* **CRUD Operations**: Create, Read, Update, Delete for Products and Clients.
+* **Project Management**: Create projects, link to clients, and manage associated documents (simulated).
+* **Revision Control**: "Rev Up" system to create **versioned copies** of offers, preserving full history.
+* **Dynamic Equipment Selection**: Powerful modal to **search, filter, and add multiple products** to a project revision.
+* **Deviation Management**: Track client-specific deviations for any equipment.
+* **Asynchronous Job Simulation**: Elegant toast notifications for long-running tasks like document generation.
+* **Theming**: Light/Dark mode switcher with persistent user preference.
+* **Responsive Design**: Clean, modern UI across desktop, tablet, and mobile.
 
-Theming: A beautiful and persistent light/dark mode theme switcher for user comfort.
+---
 
-Responsive Design: A clean and modern UI that works seamlessly across desktop, tablet, and mobile devices.
+## 🛠️ Tech Stack & Libraries
 
-🛠️ Tech Stack & Libraries
-This project is built with a modern, type-safe, and efficient technology stack:
+**Framework & Language**
 
-Framework: Next.js (with App Router) & React
+* **Next.js (App Router)** + **React**
+* **TypeScript**
 
-Language: TypeScript
+**Styling & UI**
 
-Styling: Tailwind CSS
+* **Tailwind CSS**
+* **Headless UI** (accessible primitives: Modals, Dropdowns)
+* **Lucide React** (icons)
+* **next-themes** (light/dark mode)
 
-State Management:
+**State Management**
 
-Server State: TanStack Query (React Query) for data fetching, caching, and mutations.
+* **TanStack Query** (server state: data fetching, caching, mutations)
+* **Zustand** (global UI state, e.g., authentication)
 
-UI State: Zustand for simple, lightweight global state (e.g., authentication).
+**Forms & Validation**
 
-Forms: React Hook Form with Zod for schema validation.
+* **React Hook Form** + **Zod**
 
-UI Components: Headless UI for fully accessible, unstyled primitives (Modals, Dropdowns).
+**Tables & Notifications**
 
-Tables: TanStack Table for powerful and flexible data grids.
+* **TanStack Table** (data grids)
+* **React Hot Toast** (non-blocking notifications)
 
-Icons: Lucide React for a consistent and clean icon set.
+---
 
-Notifications: React Hot Toast for elegant, non-blocking notifications.
+## 🚀 Getting Started
 
-Theming: next-themes for easy light/dark mode implementation.
+### Prerequisites
 
-🚀 Getting Started
-Follow these instructions to get the project up and running on your local machine.
+* **Node.js** ≥ 18.x
+* **npm**
 
-Prerequisites
-You must have Node.js (version 18.x or later) and npm installed on your computer.
+### Installation
 
-Installation & Setup
-Clone the repository:
+1. Clone the repository:
 
+```bash
 git clone <your-repository-url>
-
-Navigate to the project directory:
-
 cd technical-offer-app
+```
 
-Install all the required dependencies:
-The package.json file included in this project lists all the necessary libraries. The simplest way to install them all is by running:
+2. Install dependencies:
 
+```bash
 npm install
+```
 
-This single command will download and set up everything you need. For reference, the main libraries this command installs are listed below:
+**Main libraries included:**
+`@tanstack/react-query`, `@tanstack/react-table`, `zod`, `@hookform/resolvers`, `react-hook-form`, `lucide-react`, `@headlessui/react`, `clsx`, `tailwind-merge`, `zustand`, `react-dropzone`, `react-hot-toast`, `next-themes`
 
-npm install @tanstack/react-query @tanstack/react-table zod @hookform/resolvers react-hook-form lucide-react @headlessui/react clsx tailwind-merge zustand react-dropzone react-hot-toast next-themes
+### Running the App
 
-Running the Application
-Start the development server:
-
+```bash
 npm run dev
+```
 
-Open in your browser:
-Once the server is running, open your web browser and navigate to http://localhost:3000. You should be greeted by the application's login page.
+Open [http://localhost:3000](http://localhost:3000) in your browser to access the login page.
 
-📂 Project Structure
-The project follows a standard Next.js App Router structure, organized for clarity and scalability:
+---
 
+## 📂 Project Structure
+
+```
 /
-├── app/              # Main application pages and layouts
-├── components/       # Reusable React components (UI, layout, modals)
-├── hooks/            # Custom React hooks for data fetching and logic
-├── lib/              # Helper functions and the mock API
-├── store/            # Global state management stores (Zustand)
-├── types/            # TypeScript type definitions for data models
-├── public/           # Static assets like images and fonts
-└── ...               # Configuration files
+├── app/           # Main pages and layouts
+├── components/    # Reusable UI components
+├── hooks/         # Custom hooks
+├── lib/           # Helper functions & mock API
+├── store/         # Zustand global state
+├── types/         # TypeScript models
+├── public/        # Static assets (images, fonts)
+└── ...            # Config files
+```
 
-📜 Available Scripts
-In the project directory, you can run:
+---
 
-npm run dev: Runs the app in development mode.
+## 📜 Available Scripts
 
-npm run build: Builds the app for production.
+* `npm run dev` — Start the app in development mode
+* `npm run build` — Build for production
+* `npm run start` — Start the production server
+* `npm run lint` — Check code quality
 
-npm run start: Starts a production server.
-
-npm run lint: Runs the linter to check for code quality issues.
+Do you want me to do that next?
