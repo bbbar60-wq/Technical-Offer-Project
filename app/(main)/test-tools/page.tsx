@@ -3,48 +3,48 @@
 import React, { useState, useRef, useMemo } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
 import { Pencil, Trash2, Upload, PlusCircle, Image as ImageIcon } from 'lucide-react';
-import { Client } from '@/types';
-import { useClients } from '@/hooks/useClients';
+import { TestTool } from '@/types';
+import { useTestTools } from '@/hooks/useTestTools';
 import { DataTable } from '@/components/DataTable';
 import { Button } from '@/components/ui/Button';
-import ClientModal from '@/components/modals/ClientModal';
+import TestToolModal from '@/components/modals/TestToolModal';
 import { Input } from '@/components/ui/Input';
 import toast from 'react-hot-toast';
 import * as XLSX from 'xlsx';
+import Image from 'next/image'; // For image display
 
 // Helper function to normalize header names
 const normalizeHeader = (header: string): string => (header || '').trim().toLowerCase();
 
-export default function ClientsPage() {
+export default function TestToolsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingClient, setEditingClient] = useState<Client | undefined>(undefined);
+  const [editingTestTool, setEditingTestTool] = useState<TestTool | undefined>(undefined);
   const [searchTerm, setSearchTerm] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const { clients, isLoading, deleteClient, addBulkClients } = useClients();
+  const { testTools, isLoading, deleteTestTool, addBulkTestTools } = useTestTools();
 
-  // Filter clients based on search term
-  const filteredClients = useMemo(() => {
-    return (clients || []).filter(client =>
-      client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      client.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      client.contactNumber.toLowerCase().includes(searchTerm.toLowerCase())
+  // Filter tools based on search term
+  const filteredTestTools = useMemo(() => {
+    return (testTools || []).filter(tool =>
+      tool.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      tool.model.toLowerCase().includes(searchTerm.toLowerCase())
     );
-  }, [clients, searchTerm]);
+  }, [testTools, searchTerm]);
 
-  const handleEdit = (client: Client) => {
-    setEditingClient(client);
+  const handleEdit = (tool: TestTool) => {
+    setEditingTestTool(tool);
     setIsModalOpen(true);
   };
 
   const handleAddNew = () => {
-    setEditingClient(undefined);
+    setEditingTestTool(undefined);
     setIsModalOpen(true);
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
-    setEditingClient(undefined);
+    setEditingTestTool(undefined);
   };
 
   // Handle CSV/Excel file upload
@@ -80,49 +80,46 @@ export default function ClientsPage() {
               return;
           }
 
-          // Map CSV/Excel headers to Client keys (case-insensitive)
-          const validClients: Omit<Client, 'id'>[] = [];
-          const headerMap: { [key: string]: keyof Omit<Client, 'id'> } = {
+          // Map CSV/Excel headers to TestTool keys (case-insensitive)
+          const validTools: Omit<TestTool, 'id'>[] = [];
+          const headerMap: { [key: string]: keyof Omit<TestTool, 'id'> } = {
               'name': 'name',
-              'address': 'address',
-              'contactnumber': 'contactNumber',
-              'contact': 'contactNumber',
-              'logo': 'logo'
+              'model': 'model',
+              'picture': 'picture' // Assumes a column named 'picture' contains the filename/path
           };
 
           json.forEach((row, index) => {
-              const client: Partial<Omit<Client, 'id'>> = {};
+              const tool: Partial<Omit<TestTool, 'id'>> = {};
               let hasRequired = true;
               for (const rawKey in row) {
                   const normalizedKey = normalizeHeader(rawKey);
-                  const clientKey = headerMap[normalizedKey];
-                  if (clientKey) {
-                      client[clientKey] = String(row[rawKey] ?? '');
+                  const toolKey = headerMap[normalizedKey];
+                  if (toolKey) {
+                      tool[toolKey] = String(row[rawKey] ?? '');
                   }
               }
 
-              if (!client.name || !client.address || !client.contactNumber) {
-                  console.warn(`Skipping row ${index + 2}: Missing required fields.`);
+              if (!tool.name || !tool.model) {
+                  console.warn(`Skipping row ${index + 2}: Missing 'name' or 'model'.`);
                   hasRequired = false;
               }
 
               if (hasRequired) {
-                  validClients.push({
-                      name: client.name!,
-                      address: client.address!,
-                      contactNumber: client.contactNumber!,
-                      logo: client.logo ?? '', // Default logo to empty string if missing
+                  validTools.push({
+                      name: tool.name!,
+                      model: tool.model!,
+                      picture: tool.picture ?? '', // Default picture to empty string if missing
                   });
               }
           });
 
-          if (validClients.length > 0) {
-              addBulkClients(validClients, {
-                  onSuccess: () => toast.success(`${validClients.length} clients imported!`),
+          if (validTools.length > 0) {
+              addBulkTestTools(validTools, {
+                  onSuccess: () => toast.success(`${validTools.length} test tools imported!`),
                   onError: (err) => toast.error(`Import failed: ${err instanceof Error ? err.message : 'Unknown error'}`)
               });
           } else {
-              toast.error("No valid clients found (missing required fields).");
+              toast.error("No valid test tools found (missing 'name' or 'model').");
           }
         } catch (error) {
             console.error("Error processing file:", error);
@@ -143,35 +140,35 @@ export default function ClientsPage() {
   };
 
   // Define columns for the DataTable
-  const columns: ColumnDef<Client>[] = [
+  const columns: ColumnDef<TestTool>[] = [
     {
-        accessorKey: 'logo',
-        header: 'Logo',
+        accessorKey: 'picture',
+        header: 'Picture',
         cell: ({ row }) => (
             <div className="w-10 h-10 rounded border flex items-center justify-center bg-muted dark:bg-slate-700 dark:border-slate-600 overflow-hidden text-neutral-400 dark:text-slate-500">
-            {row.original.logo ? (
-                <ImageIcon className="w-6 h-6" /> // Placeholder icon - you can replace with actual image
+            {row.original.picture ? (
+                // In a real app, this would be an Image component with a proper URL
+                <ImageIcon className="w-6 h-6" /> // Placeholder icon
             ) : (
                 <ImageIcon className="w-6 h-6" />
             )}
             </div>
         ),
-        size: 80, // Fixed size for logo column
+        size: 80, // Fixed size for image column
     },
     { accessorKey: 'name', header: 'Name' },
-    { accessorKey: 'address', header: 'Address' },
-    { accessorKey: 'contactNumber', header: 'Contact' },
+    { accessorKey: 'model', header: 'Model' },
     {
       id: 'actions',
       header: () => <div className="text-right">Actions</div>,
       cell: ({ row }) => {
-        const client = row.original;
+        const tool = row.original;
         return (
           <div className="flex justify-end gap-2">
-            <Button variant="ghost" size="icon" onClick={() => handleEdit(client)} className="dark:text-slate-300 dark:hover:bg-slate-700">
+            <Button variant="ghost" size="icon" onClick={() => handleEdit(tool)} className="dark:text-slate-300 dark:hover:bg-slate-700">
               <Pencil className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon" className="text-danger" onClick={() => deleteClient(client.id)}>
+            <Button variant="ghost" size="icon" className="text-danger" onClick={() => deleteTestTool(tool.id)}>
               <Trash2 className="h-4 w-4" />
             </Button>
           </div>
@@ -180,16 +177,16 @@ export default function ClientsPage() {
     },
   ];
 
-  if (isLoading) return <div className="dark:text-slate-50">Loading clients...</div>;
+  if (isLoading) return <div className="dark:text-slate-50">Loading test tools...</div>;
 
   return (
     <div>
-      {/* Header with Search, Import and Add Buttons */}
+      {/* Header with Add and Import Buttons */}
       <div className="mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
-        <h1 className="text-3xl font-bold text-neutral-900 dark:text-slate-50">Clients</h1>
+        <h1 className="text-3xl font-bold text-neutral-900 dark:text-slate-50">Test Tools</h1>
         <div className="flex w-full md:w-auto gap-2">
             <Input
-                placeholder="Search by name, address, or contact..."
+                placeholder="Search by name or model..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="flex-grow md:flex-grow-0 md:w-64"
@@ -207,18 +204,18 @@ export default function ClientsPage() {
             />
             <Button onClick={handleAddNew}>
                 <PlusCircle className="mr-2 h-5 w-5" />
-                Add Client
+                Add Tool
             </Button>
         </div>
       </div>
 
       {/* Data Table Container */}
       <div className="rounded-lg border bg-surface shadow-soft dark:bg-slate-800 dark:border-slate-700 overflow-hidden">
-        <DataTable columns={columns} data={filteredClients} />
+        <DataTable columns={columns} data={filteredTestTools} />
       </div>
 
       {/* Modal for Adding/Editing */}
-      <ClientModal isOpen={isModalOpen} onClose={closeModal} client={editingClient} />
+      <TestToolModal isOpen={isModalOpen} onClose={closeModal} testTool={editingTestTool} />
     </div>
   );
 }

@@ -1,30 +1,46 @@
-'use client';
+'use client'
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Home, Package, FileText, Users, HardHat, Wrench, Settings, BarChart2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useAuthStore } from '@/store/authStore';
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: Home },
   { href: '/projects', label: 'Projects', icon: FileText },
   { href: '/products', label: 'Products', icon: Package },
-  { href: '/accessories', label: 'Accessories', icon: HardHat },
+  { href: '/accessories', label: 'Accessories', icon: HardHat }, // Assuming Accessories page exists or will be added
   { href: '/clients', label: 'Clients', icon: Users },
-  { href: '/test-tools', label: 'Test Tools', icon: Wrench },
-  { href: '/spare-parts', label: 'Spare Parts', icon: Settings },
+  { href: '/test-tools', label: 'Test Tools', icon: Wrench }, // Correct icon and path
+  { href: '/spare-parts', label: 'Spare Parts', icon: Settings }, // Assuming Spare Parts page exists or will be added
   { href: '/admin/users', label: 'Admin / Users', icon: Users, managerOnly: true },
   { href: '/reports', label: 'Reports/Backups', icon: BarChart2, managerOnly: true },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const { isSidebarOpen } = useAuthStore();
+  const { user } = useAuthStore();
 
   return (
-    <aside className="w-64 flex-shrink-0 border-r bg-surface p-4 dark:bg-slate-800 dark:border-slate-700">
+    <aside
+      className={cn(
+        'fixed inset-y-0 left-0 z-20 flex h-full w-64 flex-col border-r bg-surface p-4 pt-20 transition-transform duration-300 ease-in-out dark:bg-slate-800 dark:border-slate-700',
+        'transform',
+        isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+      )}
+    >
       <nav className="flex flex-col gap-2">
         {navItems.map((item) => {
-          const isActive = pathname.startsWith(item.href);
+          if (item.managerOnly && user?.role !== 'Manager') {
+            return null;
+          }
+
+          const isActive = item.href === '/dashboard'
+            ? pathname === '/dashboard' || pathname === '/'
+            : (item.href !== '/' && pathname.startsWith(item.href));
+
           return (
             <Link
               key={item.href}
@@ -45,3 +61,4 @@ export default function Sidebar() {
     </aside>
   );
 }
+

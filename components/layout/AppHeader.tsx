@@ -1,13 +1,13 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { LogOut, User as UserIcon, Bell } from 'lucide-react';
-import { useAuthStore } from '@/store/authStore';
+import { LogOut, User as UserIcon, Bell, Menu } from 'lucide-react'; // <-- Import Menu icon
+import { useAuthStore } from '@/store/authStore'; // <-- Get toggleSidebar
 import { Button } from '@/components/ui/Button';
 import { ThemeToggle } from '@/components/ThemeToggle';
 
 export default function AppHeader() {
-  const { user, logout } = useAuthStore();
+  const { user, logout, toggleSidebar } = useAuthStore();
   const router = useRouter();
 
   const handleLogout = () => {
@@ -15,13 +15,35 @@ export default function AppHeader() {
     router.push('/login');
   };
 
-  const Logo = () => <div className="text-xl font-bold text-primary">TO-APP</div>;
+  // Your Logo and Company Name Component
+  const Logo = () => (
+    <div className="flex items-center gap-3">
+      {/* This is where your logo goes.
+        It looks for the file you placed in /public/logo.png
+      */}
+      <img src="/logo.png" alt="Company Logo" className="h-8 w-8 object-contain" />
+      <span className="text-xl font-bold text-neutral-900 dark:text-slate-50">
+        Company Name
+      </span>
+    </div>
+  );
 
   return (
-    <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b bg-surface px-4 shadow-sm sm:px-6 dark:bg-slate-800 dark:border-slate-700">
-      <div>
+    <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b bg-surface px-4 shadow-sm dark:bg-slate-800 dark:border-slate-700">
+      <div className="flex items-center gap-4">
+        {/* Sidebar Toggle Button */}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={toggleSidebar}
+          className="text-neutral-700 dark:text-slate-300"
+        >
+          <Menu className="h-6 w-6" />
+        </Button>
         <Logo />
       </div>
+
+      {/* Right Side Icons */}
       <div className="flex items-center gap-4">
         <ThemeToggle />
         <Bell className="h-5 w-5 text-neutral-700 dark:text-slate-300" />

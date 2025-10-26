@@ -5,13 +5,14 @@ import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import AppHeader from '@/components/layout/AppHeader';
 import Sidebar from '@/components/layout/Sidebar';
+import { cn } from '@/lib/utils';
 
 export default function MainLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, isSidebarOpen, toggleSidebar } = useAuthStore();
   const router = useRouter();
 
   useEffect(() => {
@@ -24,7 +25,7 @@ export default function MainLayout({
     // You can show a loading spinner here while redirecting
     return (
         <div className="flex h-screen items-center justify-center bg-muted dark:bg-slate-900">
-            <p className="dark:text-slate-300">Loading...</p>
+            <p className="dark:text-slate-50">Loading...</p>
         </div>
     );
   }
@@ -34,10 +35,26 @@ export default function MainLayout({
       <Sidebar />
       <div className="flex flex-1 flex-col overflow-hidden">
         <AppHeader />
-        <main className="flex-1 overflow-y-auto p-6">
+
+        {/* Main Content Area with Dynamic Margin */}
+        <main
+          className={cn(
+            'flex-1 overflow-y-auto p-6 transition-all duration-300 ease-in-out',
+            isSidebarOpen ? 'lg:ml-64' : 'ml-0' // Apply margin on large screens
+          )}
+        >
           {children}
         </main>
       </div>
+
+      {/* Sidebar Overlay for mobile */}
+      {isSidebarOpen && (
+        <div
+          onClick={toggleSidebar}
+          className="fixed inset-0 z-10 bg-black/30 lg:hidden"
+        />
+      )}
     </div>
   );
 }
+

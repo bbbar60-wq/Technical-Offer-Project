@@ -1,5 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getClients, addClient, updateClient, deleteClient } from '@/lib/api';
+import {
+  getClients,
+  addClient,
+  updateClient,
+  deleteClient,
+  addBulkClients // Import bulk add for clients
+} from '@/lib/api';
+import { Client } from '@/types';
 
 export function useClients() {
   const queryClient = useQueryClient();
@@ -10,21 +17,28 @@ export function useClients() {
   });
 
   const addMutation = useMutation({
-    mutationFn: addClient,
+    mutationFn: (clientData: Omit<Client, 'id'>) => addClient(clientData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['clients'] });
     },
   });
 
+  const addBulkMutation = useMutation({
+      mutationFn: (clientsData: Omit<Client, 'id'>[]) => addBulkClients(clientsData),
+      onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ['clients'] });
+      }
+  });
+
   const updateMutation = useMutation({
-    mutationFn: updateClient,
+    mutationFn: (clientData: Client) => updateClient(clientData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['clients'] });
     },
   });
 
   const deleteMutation = useMutation({
-    mutationFn: deleteClient,
+    mutationFn: (clientId: string) => deleteClient(clientId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['clients'] });
     },
@@ -35,6 +49,7 @@ export function useClients() {
     isLoading,
     error,
     addClient: addMutation.mutate,
+    addBulkClients: addBulkMutation.mutate, // Expose bulk add
     updateClient: updateMutation.mutate,
     deleteClient: deleteMutation.mutate,
   };
